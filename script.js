@@ -46,12 +46,12 @@ function updateHp(){
 }
 
 function updateTimerDisplay() {
-    const minutes = Math.floor(elapsedSeconds / 60);
-    const seconds = elapsedSeconds % 60;
+    let minutes = Math.floor(elapsedSeconds / 60);
+    let seconds = elapsedSeconds % 60;
 
     // Format with leading zeros
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    const formattedSeconds = String(seconds).padStart(2, '0');
+    let formattedMinutes = String(minutes).padStart(2, '0');
+    let formattedSeconds = String(seconds).padStart(2, '0');
 
     const timerDisplay = document.getElementById('time');
     timerDisplay.textContent = `${formattedMinutes}:${formattedSeconds}`;
@@ -433,6 +433,29 @@ function playSfx(src){
 function update(){
     if(player.health <= 0){
         playSfx(explosionWav);
+
+        c.fillStyle = "black";
+        c.globalAlpha = 0.75;
+        c.beginPath();
+        c.rect(0,0,canvas.width,canvas.height);
+        c.closePath();
+        c.fill();
+
+        c.fillStyle = "white";
+        c.globalAlpha = 1.0;
+        c.font = "bold 40px Cominc Sans MS";
+        c.textAlign = "center";
+        c.fillText("Game Over", canvas.width/2, canvas.height/2-40);
+        c.fillText("Score: " + player.score, canvas.width/2, canvas.height/2)
+
+        let minutes = Math.floor(elapsedSeconds / 60);
+        let seconds = elapsedSeconds % 60;
+        let formattedMinutes = String(minutes).padStart(2, '0');
+        let formattedSeconds = String(seconds).padStart(2, '0');
+
+        c.fillText("Time: " + formattedMinutes + ":" + formattedSeconds, canvas.width/2, canvas.height/2+40);
+
+
         return;
     }
 
