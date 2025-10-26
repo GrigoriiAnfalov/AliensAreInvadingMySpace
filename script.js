@@ -9,7 +9,9 @@ const friendlyLaser = document.getElementById("friendlyLaser");
 const playerSprite = document.getElementById("player");
 const hampterSprite = document.getElementById("hampter");
 const donkSprite = document.getElementById("donk");
+const bombSprite = document.getElementById("subspace");
 
+const subspaceWav = "subspace.mp3";
 const hpUpWav = "hpUp.wav";
 const damageWav = "hit.wav";
 const enemyShootWav = "enemyShoot.wav";
@@ -71,8 +73,8 @@ const numOfAsteroids = 6;// Change this value to change the # of balls
 const numOfAliens = 3;
 
 const asteroidSize = 35;
-const alienSizex = 62;
-const alienSizey = 25;
+const alienSizex = 80;
+const alienSizey = 32;
 const playerSizex = 60;
 const playerSizey = 80;
 
@@ -102,6 +104,13 @@ const player = {
     health : maxHp,
     speed : 4,
     score : 0,
+};
+
+const bomb = {
+    sprite : bombSprite,
+    size : {x : 30, y : 30},
+    pos : {x : 0, y : 0},
+    flag : 0,
 };
 
 let movingLeft = false;
@@ -283,6 +292,9 @@ function draw(){
         c.closePath();
         c.fill();
         */
+        if(bomb.flag == 1){
+            c.drawImage(bomb.sprite, bomb.pos.x, bomb.pos.y, bomb.size.x, bomb.size.y);
+        }
         c.drawImage(obj.sprite, obj.pos.x, obj.pos.y, obj.size.x, obj.size.y);
         c.drawImage(player.sprite, player.pos.x, player.pos.y, player.size.x, player.size.y);
     }
@@ -425,20 +437,46 @@ function movement(){
 
 function playSfx(src){
     let sfx = new Audio(src);
-    if(src != explosionWav || src != damageWav || src != hpUpWav || src != collisionWav){
+    if(src != explosionWav || src != damageWav || src != hpUpWav || src != collisionWav || src!= subspaceWav){
         sfx.volume = 0.025;
     }
     //sfx.src = src;
     sfx.play();
 }
+function bombOverlap(){
+    let playerCenter = {x : player.pos.x + player.size.x/2, y : player.pos.y + player.size.y/2};
+    let bombCenter = {x : bomb.pos.x + bomb.size.x/2, y : bomb.pos.y + bomb.size.y/2}
+    let r = {x : player.size.x/3, y : player.size.y/3};
+
+    let distx = Math.abs(playerCenter.x-bombCenter.x);
+    let disty = Math.abs(playerCenter.y-bombCenter.y);
+    if(distx <= r.x && disty <= r.y){
+        playSfx(subspaceWav);
+        bomb.flag = 0;
+        for(let i =0 ; i < arrLength; i++){
+            if(objects[i].sprite != donkSprite){
+                objects.splice(i,1);
+                arrLength--;
+                i--;
+            }
+        }
+    }
+}
+
 
 function update(){
-    if(elapsedSeconds%60 == 0 && secondsCounter == 60 && Math.floor(elapsedSeconds/60) > 0){
+    if(elapsedSeconds%60 == 0 && secondsCounter == 60 && Math.floor(elapsedSeconds/60) >= 0){
         timeStep *= 1.15;
         const object = new createObject(0, donkSprite, 20, 20, getRandomInt(0, canvas.width), canvas.height+40, getRandomInt(-50, 50), -40);
         objects.push(object);
-    }
 
+        bomb.flag = 1;
+        bomb.pos.x = getRandomInt(0, canvas.width-bomb.size.x);
+        bomb.pos.y = getRandomInt(0, canvas.height-bomb.size.y);
+    }
+    if(bomb.flag == 1){
+        bombOverlap();
+    }
     if(player.health <= 0){
         playSfx(explosionWav);
 
@@ -488,7 +526,7 @@ function update(){
     movement();
     playerShot();
     enemyShot();
-    detectDmg();
+    //detectDmg();
     playerHit();
 
     calculate(); // calculates position & collision with walls
