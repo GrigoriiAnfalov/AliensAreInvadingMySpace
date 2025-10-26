@@ -61,14 +61,14 @@ let alienTimer = 0;
 let asteroidTimer = 0;
 let playerBulletSpeed = -190;
 
-const numOfAsteroids = 5;// Change this value to change the # of balls
+const numOfAsteroids = 6;// Change this value to change the # of balls
 const numOfAliens = 3;
 
-const asteroidSize = 30;
-const alienSizex = 50;
-const alienSizey = 100;
-const playerSizex = 50;
-const playerSizey = 65;
+const asteroidSize = 35;
+const alienSizex = 62;
+const alienSizey = 25;
+const playerSizex = 60;
+const playerSizey = 80;
 
 const asteroidSpeed = 200;
 const alienSpeed = 200;
@@ -83,6 +83,9 @@ const objects = []; // array for balls
 
 const asteroidSpawnTime = 2; // in seconds
 const alienSpawnTime = 4;
+
+const playerLaserSize = {x:8, y:20};
+const enemyLaserSize = {x:5, y:15};
 
 const player = {
     sprite : playerSprite,
@@ -164,12 +167,12 @@ function createAliens(){
 }
 
 function createEnemyLaser(enemy){
-    const object = new createObject(0, enemyLaser, 5, 15, enemy.pos.x+enemy.size.x/2, enemy.pos.y+enemy.size.y/2, 0, 70);
+    const object = new createObject(0, enemyLaser, enemyLaserSize.x, enemyLaserSize.y, enemy.pos.x+enemy.size.x/2, enemy.pos.y+enemy.size.y/2, 0, 70);
     objects.push(object);
 }
 
 function createPlayerLaser(player){
-    const object = new createObject(0, friendlyLaser, 8, 20, player.pos.x+player.size.x/2-4, player.pos.y, 0, playerBulletSpeed);
+    const object = new createObject(0, friendlyLaser, playerLaserSize.x, playerLaserSize.y, player.pos.x+player.size.x/2-playerLaserSize.x/2, player.pos.y-playerLaserSize.y/2, 0, playerBulletSpeed);
     objects.push(object);
 }
 
@@ -290,7 +293,7 @@ function enemyShot(){
             createEnemyLaser(objects[i]);
             arrLength++;
             objects[i].shootingTimer = 0;
-            objects[i].alienShootTime *= .98;
+            objects[i].alienShootTime *= .97;
             playSfx(enemyShootWav);
         }
     }
@@ -465,8 +468,8 @@ function update(){
 
     asteroidTimer++;
     alienTimer++;
-
     secondsCounter++;
+
     updateTimerDisplay();
     updateScore();
     updateHp();
