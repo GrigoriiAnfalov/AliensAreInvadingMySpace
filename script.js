@@ -526,7 +526,7 @@ function update(){
     movement();
     playerShot();
     enemyShot();
-    //detectDmg();
+    detectDmg();
     playerHit();
 
     calculate(); // calculates position & collision with walls
