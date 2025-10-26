@@ -465,7 +465,7 @@ function bombOverlap(){
 
 
 function update(){
-    if(elapsedSeconds%60 == 0 && secondsCounter == 60 && Math.floor(elapsedSeconds/60) >= 0){
+    if(elapsedSeconds%60 == 0 && secondsCounter == 60 && Math.floor(elapsedSeconds/60) > 0){
         timeStep *= 1.15;
         const object = new createObject(0, donkSprite, 20, 20, getRandomInt(0, canvas.width), canvas.height+40, getRandomInt(-50, 50), -40);
         objects.push(object);
